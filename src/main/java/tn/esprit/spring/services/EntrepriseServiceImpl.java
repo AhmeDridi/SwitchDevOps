@@ -40,8 +40,8 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 	public void affecterDepartementAEntreprise(int depId, int entrepriseId) {
 		log.info("affect department to enterprise");
 		try {
-			Entreprise entrepriseManagedEntity = entrepriseRepoistory.findById(entrepriseId).get();
-			Departement depManagedEntity = deptRepoistory.findById(depId).get();
+			Entreprise entrepriseManagedEntity = entrepriseRepoistory.findById(entrepriseId).orElse(null);
+			Departement depManagedEntity = deptRepoistory.findById(depId).orElse(null);
 
 			if (entrepriseManagedEntity.getDepartements() == null) {
 				log.info("entreprise has no departement : ");
@@ -59,7 +59,7 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 	}
 
 	public List<String> getAllDepartementsNamesByEntreprise(int entrepriseId) {
-		Entreprise entrepriseManagedEntity = entrepriseRepoistory.findById(entrepriseId).get();
+		Entreprise entrepriseManagedEntity = entrepriseRepoistory.findById(entrepriseId).orElse(null);
 		List<String> depNames = new ArrayList<>();
 		for (Departement dep : entrepriseManagedEntity.getDepartements()) {
 			depNames.add(dep.getName());
@@ -71,17 +71,17 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 	@Transactional
 	public void deleteEntrepriseById(int entrepriseId) {
 		log.info("deleted enterprise");
-		entrepriseRepoistory.delete(entrepriseRepoistory.findById(entrepriseId).get());
+		entrepriseRepoistory.delete(entrepriseRepoistory.findById(entrepriseId).orElse(null));
 	}
 
 	@Transactional
 	public void deleteDepartementById(int depId) {
 		log.info("delete department");
-		deptRepoistory.delete(deptRepoistory.findById(depId).get());
+		deptRepoistory.delete(deptRepoistory.findById(depId).orElse(null));
 	}
 
 	public Entreprise getEntrepriseById(int entrepriseId) {
-		return entrepriseRepoistory.findById(entrepriseId).get();
+		return entrepriseRepoistory.findById(entrepriseId).orElse(null);
 	}
 
 }
