@@ -1,5 +1,6 @@
 package tn.esprit.spring.services;
 
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +24,7 @@ public class EmployeServiceTest {
 	private IEmployeService es;
 	private Employe employe;
 	private Contrat contrat;
+	private static final Logger log= Logger.getLogger(EmployeServiceImpl.class);
 
 	@Before
 	public void initEmployee() {
