@@ -77,50 +77,107 @@ private static final Logger log= Logger.getLogger(EmployeServiceImpl.class);
 
 	@Override
 	public void desaffecterEmployeDuDepartement(int employeId, int depId) {
-		// TODO Auto-generated method stub
+		Departement dep = deptRepoistory.findById(depId).get();
+		int employeNb = dep.getEmployes().size();
+		log.info("Unset employe "+employeNb+" from department "+ dep.getName());
+		try {
+		for (int index = 0; index < employeNb; index++) {
+			if (dep.getEmployes().get(index).getId() == employeId) {
+				{
+					dep.getEmployes().remove(index);
+				log.info("Employee "+employeId+" is removed");
+				}
+				break;
+			}
+		}
+		}catch (Exception ex) {
+			log.error("failed to remove employe "+employeNb+" from department "+ dep.getName());
+		}
 		
 	}
 
 	@Override
 	public int ajouterContrat(Contrat contrat) {
-		// TODO Auto-generated method stub
+		log.info("Add contract : ");
+		try {
+		contratRepoistory.save(contrat);
+		log.info("Contract has been added successfuly");
+		return contrat.getReference();
+		}catch(Exception ex)
+		{
+			log.error("failed to add contract ");
+		}
 		return 0;
 	}
 
 	@Override
 	public void affecterContratAEmploye(int contratId, int employeId) {
-		// TODO Auto-generated method stub
-		
+		log.info("Affect contract "+contratId+" to employee"+ employeId);
+		try {
+		Contrat contratManagedEntity = contratRepoistory.findById(contratId).get();
+		Employe employeManagedEntity = employeRepository.findById(employeId).get();
+		contratManagedEntity.setEmploye(employeManagedEntity);
+		contratRepoistory.save(contratManagedEntity);
+		log.info("Contract affected");
+		}catch(Exception ex)
+		{
+			log.error("Failed to affect contract "+contratId+" to employee"+ employeId);
+		}
 	}
 
 	@Override
 	public String getEmployePrenomById(int employeId) {
-		// TODO Auto-generated method stub
-		return null;
+		log.info("Show employee"+ employeId);
+		Employe employeManagedEntity = employeRepository.findById(employeId).get();
+		return employeManagedEntity.getPrenom();
 	}
 
 	@Override
 	public void deleteEmployeById(int employeId) {
-		// TODO Auto-generated method stub
-		
+		Employe employe = new Employe();
+		try {
+		employe = employeRepository.findById(employeId).get();
+		}catch (Exception ex)
+		{
+			log.error("cannot find employee with id : "+ employeId);
+		}
+		log.info("Delete employee"+ employeId);
+		try {
+		for(Departement dep : employe.getDepartements()){
+			dep.getEmployes().remove(employe);
+		}
+		employeRepository.delete(employe);
+		log.info("Employe removed successfuly");
+		}catch(Exception ex )
+		{
+			log.error("Employee "+ employeId+ " cannot be removed");
+		}
+
 	}
 
 	@Override
 	public void deleteContratById(int contratId) {
-		// TODO Auto-generated method stub
-		
+		Contrat contratManagedEntity = new Contrat();
+		try {
+			 contratManagedEntity = contratRepoistory.findById(contratId).get();
+		}catch (Exception ex)
+		{
+			log.error("cannot find contract with id : "+ contratId);
+		}
+		contratRepoistory.delete(contratManagedEntity);
+		log.info("Contract "+contratId+" has been deleted successfuly");
 	}
 
 	@Override
 	public int getNombreEmployeJPQL() {
-		// TODO Auto-generated method stub
-		return 0;
+		log.info("The number of employees is  : ");
+		return employeRepository.countemp();
 	}
 
 	@Override
 	public List<String> getAllEmployeNamesJPQL() {
-		// TODO Auto-generated method stub
-		return null;
+		log.info("Employees names are  : ");
+		return employeRepository.employeNames();
 	}
 
 	@Override
