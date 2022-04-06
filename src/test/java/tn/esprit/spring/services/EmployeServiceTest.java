@@ -64,11 +64,11 @@ public class EmployeServiceTest {
 		Assert.assertEquals(0, employe.getId());
 	}
 
-	@Test
-	public void getEmployePrenomById_Null() {
-		log.info("Error getting employe");
-		Assert.assertEquals(null, es.getEmployePrenomById(0));
-	}
+//	@Test
+//	public void getEmployePrenomById_Null() {
+//		log.info("Error getting employe");
+//		Assert.assertEquals(null, es.getEmployePrenomById(0));
+//	}
 
 	@Test
 	public void verifyEmployeRole() {
