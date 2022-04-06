@@ -1,6 +1,7 @@
 package tn.esprit.spring.services;
 
 import org.apache.log4j.Logger;
+import org.hibernate.validator.constraints.SafeHtml.Tag;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -131,5 +132,24 @@ public class EmployeServiceTest {
 		log.info("Number of employees :");
 		es.getNombreEmployeJPQL();
 	}
+
+	/************* oumayma *******************/
+	@Test
+	@Tag(name = "Verify all the employees by entreprise")
+	public void verifyGetAllEmployeByEntreprise() {
+		log.info("list of all employee by entreprise:");
+		Entreprise E = new Entreprise();
+		E.setId(2);
+		E.setName("Entreprise");
+		es.getAllEmployeByEntreprise(E);
+	}
+
+	@Test
+	@Tag(name = "Verify if all Contract are deleted")
+	public void verifydeleteAllContratJPQL() {
+		log.info("All of Contract :");
+		es.deleteAllContratJPQL();
+	}
+	
 	
 }
