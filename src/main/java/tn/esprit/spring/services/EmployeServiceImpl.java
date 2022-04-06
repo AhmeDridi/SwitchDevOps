@@ -1,8 +1,10 @@
 package tn.esprit.spring.services;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import tn.esprit.spring.repository.DepartementRepository;
 import tn.esprit.spring.repository.EmployeRepository;
 import tn.esprit.spring.repository.TimesheetRepository;
 
+
+
 @Service
 @Slf4j
 public class EmployeServiceImpl implements IEmployeService {
@@ -32,7 +36,8 @@ public class EmployeServiceImpl implements IEmployeService {
 	ContratRepository contratRepoistory;
 	@Autowired
 	TimesheetRepository timesheetRepository;
-private static final Logger log= Logger.getLogger(EmployeServiceImpl.class);
+	private static final Logger log= Logger.getLogger(EmployeServiceImpl.class);
+
 	public int ajouterEmploye(Employe employe) {
 		log.info("add of employee : " + employe.getNom());
 		employeRepository.save(employe);
@@ -79,32 +84,31 @@ private static final Logger log= Logger.getLogger(EmployeServiceImpl.class);
 	public void desaffecterEmployeDuDepartement(int employeId, int depId) {
 		Departement dep = deptRepoistory.findById(depId).get();
 		int employeNb = dep.getEmployes().size();
-		log.info("Unset employe "+employeNb+" from department "+ dep.getName());
+		log.info("Unset employe " + employeNb + " from department " + dep.getName());
 		try {
-		for (int index = 0; index < employeNb; index++) {
-			if (dep.getEmployes().get(index).getId() == employeId) {
-				{
-					dep.getEmployes().remove(index);
-				log.info("Employee "+employeId+" is removed");
+			for (int index = 0; index < employeNb; index++) {
+				if (dep.getEmployes().get(index).getId() == employeId) {
+					{
+						dep.getEmployes().remove(index);
+						log.info("Employee " + employeId + " is removed");
+					}
+					break;
 				}
-				break;
 			}
+		} catch (Exception ex) {
+			log.error("failed to remove employe " + employeNb + " from department " + dep.getName());
 		}
-		}catch (Exception ex) {
-			log.error("failed to remove employe "+employeNb+" from department "+ dep.getName());
-		}
-		
+
 	}
 
 	@Override
 	public int ajouterContrat(Contrat contrat) {
 		log.info("Add contract : ");
 		try {
-		contratRepoistory.save(contrat);
-		log.info("Contract has been added successfuly");
-		return contrat.getReference();
-		}catch(Exception ex)
-		{
+			contratRepoistory.save(contrat);
+			log.info("Contract has been added successfuly");
+			return contrat.getReference();
+		} catch (Exception ex) {
 			log.error("failed to add contract ");
 		}
 		return 0;
@@ -112,22 +116,21 @@ private static final Logger log= Logger.getLogger(EmployeServiceImpl.class);
 
 	@Override
 	public void affecterContratAEmploye(int contratId, int employeId) {
-		log.info("Affect contract "+contratId+" to employee"+ employeId);
+		log.info("Affect contract " + contratId + " to employee" + employeId);
 		try {
-		Contrat contratManagedEntity = contratRepoistory.findById(contratId).get();
-		Employe employeManagedEntity = employeRepository.findById(employeId).get();
-		contratManagedEntity.setEmploye(employeManagedEntity);
-		contratRepoistory.save(contratManagedEntity);
-		log.info("Contract affected");
-		}catch(Exception ex)
-		{
-			log.error("Failed to affect contract "+contratId+" to employee"+ employeId);
+			Contrat contratManagedEntity = contratRepoistory.findById(contratId).get();
+			Employe employeManagedEntity = employeRepository.findById(employeId).get();
+			contratManagedEntity.setEmploye(employeManagedEntity);
+			contratRepoistory.save(contratManagedEntity);
+			log.info("Contract affected");
+		} catch (Exception ex) {
+			log.error("Failed to affect contract " + contratId + " to employee" + employeId);
 		}
 	}
 
 	@Override
 	public String getEmployePrenomById(int employeId) {
-		log.info("Show employee"+ employeId);
+		log.info("Show employee" + employeId);
 		Employe employeManagedEntity = employeRepository.findById(employeId).get();
 		return employeManagedEntity.getPrenom();
 	}
@@ -136,21 +139,19 @@ private static final Logger log= Logger.getLogger(EmployeServiceImpl.class);
 	public void deleteEmployeById(int employeId) {
 		Employe employe = new Employe();
 		try {
-		employe = employeRepository.findById(employeId).get();
-		}catch (Exception ex)
-		{
-			log.error("cannot find employee with id : "+ employeId);
+			employe = employeRepository.findById(employeId).get();
+		} catch (Exception ex) {
+			log.error("cannot find employee with id : " + employeId);
 		}
-		log.info("Delete employee"+ employeId);
+		log.info("Delete employee" + employeId);
 		try {
-		for(Departement dep : employe.getDepartements()){
-			dep.getEmployes().remove(employe);
-		}
-		employeRepository.delete(employe);
-		log.info("Employe removed successfuly");
-		}catch(Exception ex )
-		{
-			log.error("Employee "+ employeId+ " cannot be removed");
+			for (Departement dep : employe.getDepartements()) {
+				dep.getEmployes().remove(employe);
+			}
+			employeRepository.delete(employe);
+			log.info("Employe removed successfuly");
+		} catch (Exception ex) {
+			log.error("Employee " + employeId + " cannot be removed");
 		}
 
 	}
@@ -159,13 +160,12 @@ private static final Logger log= Logger.getLogger(EmployeServiceImpl.class);
 	public void deleteContratById(int contratId) {
 		Contrat contratManagedEntity = new Contrat();
 		try {
-			 contratManagedEntity = contratRepoistory.findById(contratId).get();
-		}catch (Exception ex)
-		{
-			log.error("cannot find contract with id : "+ contratId);
+			contratManagedEntity = contratRepoistory.findById(contratId).get();
+		} catch (Exception ex) {
+			log.error("cannot find contract with id : " + contratId);
 		}
 		contratRepoistory.delete(contratManagedEntity);
-		log.info("Contract "+contratId+" has been deleted successfuly");
+		log.info("Contract " + contratId + " has been deleted successfuly");
 	}
 
 	@Override
@@ -180,48 +180,56 @@ private static final Logger log= Logger.getLogger(EmployeServiceImpl.class);
 		return employeRepository.employeNames();
 	}
 
+	/*************** Oumayma ***************/
+
 	@Override
 	public List<Employe> getAllEmployeByEntreprise(Entreprise entreprise) {
-		// TODO Auto-generated method stub
-		return null;
+		log.info("Employees names for every enterprise  : ");
+		return employeRepository.getAllEmployeByEntreprisec(entreprise);
+
 	}
 
 	@Override
 	public void mettreAjourEmailByEmployeIdJPQL(String email, int employeId) {
-		// TODO Auto-generated method stub
-		
+		Optional<Employe> empl = employeRepository.findById(employeId);
+		Employe employe = null;
+		if (empl.isPresent()) {
+			log.info(MessageFormat.format("Employe Id,{0}", employe.getId()));
+			employe.setEmail(email);
+			log.info(MessageFormat.format("Employe Id   {0}", employe));
+			employeRepository.save(employe);
+		} else {
+			log.info(MessageFormat.format("Employe doesn''t exist{0}", employe));
+
+		}
+
 	}
 
 	@Override
 	public void deleteAllContratJPQL() {
-		// TODO Auto-generated method stub
-		
+		employeRepository.deleteAllContratJPQL();
+
 	}
 
 	@Override
 	public float getSalaireByEmployeIdJPQL(int employeId) {
-		// TODO Auto-generated method stub
-		return 0;
+		return employeRepository.getSalaireByEmployeIdJPQL(employeId);
 	}
 
 	@Override
 	public Double getSalaireMoyenByDepartementId(int departementId) {
-		// TODO Auto-generated method stub
-		return null;
+		return employeRepository.getSalaireMoyenByDepartementId(departementId);
 	}
 
 	@Override
 	public List<Employe> getAllEmployes() {
-		// TODO Auto-generated method stub
-		return null;
+		return (List<Employe>) employeRepository.findAll();
 	}
 
 	@Override
 	public List<Timesheet> getTimesheetsByMissionAndDate(Employe employe, Mission mission, Date dateDebut,
 			Date dateFin) {
-		// TODO Auto-generated method stub
-		return null;
+		return timesheetRepository.getTimesheetsByMissionAndDate(employe, mission, dateDebut, dateFin);
 	}
 
-	 
 }
